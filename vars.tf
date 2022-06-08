@@ -23,28 +23,35 @@ variable virtual_machine_names {
     description = "List of all the Virtual machine names"
 }
 
-variable vmss-public-ips {
-    type = list(string)
-    description = "List of all the public Ip names"
+variable "jumpbox-public-ip" {
+    description = "The jumbox public ip name"
+    default = "jumpboxPublicIp"
 }
 
-variable jumpbox-public-ips {
-    type = list(string)
-    description = "List of all the jumbox public ip names"
-}
-
-variable jumpboxVM {
-    type = list(string)
-    description = "List of all the jumbox Virtual machine names"
+variable "jumpboxVM" {
+    description = "The jumbox Virtual machine names"
+    default = "jumboxVM"
 }
  
-variable jumpbox-nics {
+variable "vmss-nic" {
     type = list(string)
-    description = "List of all the jumbox Nic names"
+    description = "List of all the VM Nic names"
 }
-variable BackEndAddressPools {
+ 
+variable "jumpbox-nic" {
+    description = "The jumbox Nic names"
+    default = "jumpboxNetworkInterface"
+}
+
+variable "disks" {
     type = list(string)
     description = "List of all the BackEnd Address Pools names"
+   
+}
+
+variable "BackEndAddressPool" {
+    default = "BackEndAddressPool"
+    description = "backend address pool name"
 }
 
 variable "tags" {
@@ -67,4 +74,5 @@ variable "admin_user" {
 
 variable "admin_password" {
    description = "Default password for admin account"
+   default = "Udacity123456"
 }
