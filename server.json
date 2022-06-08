@@ -15,8 +15,6 @@
 		"managed_image_resource_group_name": "myPackerImages",
 		"managed_image_name": "myPackerImage",
 		
-		"build_resource_group_name": "myResourceGroup",
-
 		"os_type": "Linux",
 		"image_publisher": "Canonical",
 		"image_offer": "UbuntuServer",
@@ -28,7 +26,7 @@
 			"environment": "codelab"
 		},
 	
-		
+		"location": "East US", 
 		"vm_size": "Standard_DS1_v2"
 		
 	  }],
