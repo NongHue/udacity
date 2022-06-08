@@ -18,7 +18,12 @@ variable "location" {
    description = "Location where resources will be created"
 }
 
-variable virtual_machine_names {
+variable "virtual_machine_names" {
+    type = list(string)
+    description = "List of all the Virtual machine names"
+}
+
+variable "vmdisks" {
     type = list(string)
     description = "List of all the Virtual machine names"
 }

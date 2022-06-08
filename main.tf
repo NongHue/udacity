@@ -147,20 +147,13 @@ resource "azurerm_virtual_machine" "vmss" {
   }
   
   storage_os_disk {
-    name              = "vmdisk"
+    name              = var.vmdisks[count.index]
     caching           = "ReadWrite"
     create_option     = "FromImage"
     managed_disk_type = "Standard_LRS"
   }
 
-  storage_data_disk {
-    name         = azurerm_managed_disk.vmss[count.index].name
-    lun          = 2
-    caching      = "ReadWrite"
-    create_option     = "Empty"
-  }
- 
-  os_profile {
+    os_profile {
     computer_name = "vmlab"
     admin_username       = var.admin_user
     admin_password       = var.admin_password
@@ -205,7 +198,7 @@ resource "azurerm_virtual_machine_data_disk_attachment" "vmss" {
   count = 3
   managed_disk_id    = azurerm_managed_disk.vmss[count.index].id
   virtual_machine_id = azurerm_virtual_machine.vmss[count.index].id
-  lun                = "10"
+  lun                = "2"
   caching            = "ReadWrite"
 }
 
