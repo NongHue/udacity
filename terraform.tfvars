@@ -1,6 +1,6 @@
 virtual_machine_names = ["Machine1", "Machine2", "Machine3"]
 
-vmss-nic = ["vmssnic1", "vmssnic2", "vmssnic3"]
+vmudacity-nic = ["vmudacitynic1", "vmudacitynic2", "vmudacitynic3"]
 
 jumpbox-public-ips = ["jumboxPublicIp1", "jumboxPublicIp2", "jumboxPublicIp3"]
 

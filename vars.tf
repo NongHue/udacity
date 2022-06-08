@@ -38,7 +38,7 @@ variable "jumpboxVM" {
     default = "jumboxVM"
 }
  
-variable "vmss-nic" {
+variable "vmudacity-nic" {
     type = list(string)
     description = "List of all the VM Nic names"
 }
