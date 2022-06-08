@@ -147,7 +147,7 @@ resource "azurerm_virtual_machine" "vmss" {
   }
   
   storage_os_disk {
-    name              = ""
+    name              = "vmdisk"
     caching           = "ReadWrite"
     create_option     = "FromImage"
     managed_disk_type = "Standard_LRS"
@@ -155,7 +155,7 @@ resource "azurerm_virtual_machine" "vmss" {
 
   storage_data_disk {
     name         = azurerm_managed_disk.vmss[count.index].name
-    lun          = 0
+    lun          = 2
     caching      = "ReadWrite"
     create_option     = "Empty"
   }
