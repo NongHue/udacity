@@ -17,9 +17,51 @@ For this project, you will write a Packer template and a Terraform template to d
 4. Install [Terraform](https://www.terraform.io/downloads.html)
 
 ### Instructions
-**Your words here**
+
+
+1. Create packer image
+- Run az group create to create a resource group to hold the Packer image.
+
+`az group create -n myPackerImages -l eastus`
+
+- Run az account show to display the current Azure subscription.
+
+`az account show --query "{ subscription_id: id }"`
+
+- Run az ad sp create-for-rbac to enable Packer to authenticate to Azure using a service principal.
+
+`az ad sp create-for-rbac --role Contributor --scopes /subscriptions/<subscription_id> --query "{ client_id: appId, client_secret: password, tenant_id: tenant }"`
+
+- Add environment variables: 
+
+`export ARM_CLIENT_ID="xxx"`
+
+`export ARM_CLIENT_SECRET="xxx"`
+
+`export ARM_SUBSCRIPTION_ID="xxx"`
+
+- Build the Packer image.
+
+`packer build server.json`
+
+2. Implement the Terraform code
+- Run terraform init to initialize the Terraform deployment.
+
+`terraform init`
+
+- Run terraform plan to create an execution plan.
+
+`terraform plan -out solution.plan`
+
+- Run terraform apply to apply the execution plan to your cloud infrastructure.
+
+`terraform apply "solution.plan"`
+
 
 ### Output
-**Your words here**
+You see values for the following:
 
-Just to test 2 
+- Virtual machine FQDN (3 machine)
+- Jumpbox FQDN
+- Jumpbox IP address
+ 
