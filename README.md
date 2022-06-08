@@ -22,4 +22,4 @@ For this project, you will write a Packer template and a Terraform template to d
 ### Output
 **Your words here**
 
-Just to test
+Just to test 2 
