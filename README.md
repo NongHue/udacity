@@ -65,3 +65,6 @@ You see values for the following:
 - Jumpbox FQDN
 - Jumpbox IP address
  
+### Destroy resource after verify
+Run terraform destroy to destroy all the resources 
+`terraform destroy`
