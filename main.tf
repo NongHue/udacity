@@ -89,8 +89,8 @@ resource "azurerm_lb_rule" "lbnatrule" {
 }
 
 
-resource "azurerm_network_interface" "vmudacity" {
-  count               = 3
+resource "azurerm_network_interface" "vmudacity" { . 
+  count               = var.count
   name                = var.vmudacity-nic[count.index]
   location            = var.location
   resource_group_name = azurerm_resource_group.vmudacity.name
@@ -115,7 +115,7 @@ data "azurerm_image" "image" {
 }
 
 resource "azurerm_managed_disk" "vmudacity" {
-  count = 3
+  count = var.count
   name                = var.disks[count.index]
   location            = var.location
   resource_group_name = azurerm_resource_group.vmudacity.name
@@ -134,7 +134,7 @@ resource "azurerm_availability_set" "vmudacity" {
 }
 
 resource "azurerm_virtual_machine" "vmudacity" {
-  count               = 3
+  count               = var.count
   name                = var.virtual_machine_names[count.index]
   location            = var.location
   resource_group_name = azurerm_resource_group.vmudacity.name
@@ -195,7 +195,7 @@ resource "azurerm_network_interface" "jumpbox" {
 }
 
 resource "azurerm_virtual_machine_data_disk_attachment" "vmudacity" {
-  count = 3
+  count = var.count
   managed_disk_id    = azurerm_managed_disk.vmudacity[count.index].id
   virtual_machine_id = azurerm_virtual_machine.vmudacity[count.index].id
   lun                = "2"

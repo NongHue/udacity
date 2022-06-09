@@ -72,6 +72,11 @@ variable "application_port" {
    default     = 80
 }
 
+variable "count" {
+   description = "the number of resources create"
+   default     = 3
+}
+
 variable "admin_user" {
    description = "User name to use as the admin account on the VMs that will be part of the VM scale set"
    default     = "azureuser"
