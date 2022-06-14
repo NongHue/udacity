@@ -54,6 +54,18 @@ variable "disks" {
    
 }
 
+variable "natrules"{
+   type = list(string)
+   description = "list nat rule names"
+}
+
+variable "frontports" {
+    type = list(string)
+    description = "List of all the frontend ports names"
+   
+}
+
+
 variable "BackEndAddressPool" {
     default = "BackEndAddressPool"
     description = "backend address pool name"
@@ -67,12 +79,17 @@ variable "tags" {
    }
 }
 
+variable "vmudacity-nsg"{
+   description = "Network security group "
+   default = "vmUdacityNsg"
+}
+
 variable "application_port" {
    description = "Port that you want to expose to the external load balancer"
    default     = 80
 }
 
-variable "count" {
+variable "number" {
    description = "the number of resources create"
    default     = 3
 }
@@ -84,5 +101,5 @@ variable "admin_user" {
 
 variable "admin_password" {
    description = "Default password for admin account"
-   
+   default     = "azureuser"
 }

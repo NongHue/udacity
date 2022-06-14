@@ -16,7 +16,7 @@ resource "random_string" "fqdn" {
 }
 
 resource "azurerm_network_security_group" "vmudacity" {
-  name                = "acceptanceTestSecurityGroup1"
+  name                = var.vmudacity-nsg
   location            = azurerm_resource_group.vmudacity.location
   resource_group_name = azurerm_resource_group.vmudacity.name
 }
@@ -28,7 +28,7 @@ resource "azurerm_network_security_rule" "vmudacity" {
   access                      = "Allow"
   protocol                    = "Tcp"
   source_port_range           = "*"
-  destination_port_range      = "*"
+  destination_port_range      = "22"
   source_address_prefix       = "10.0.2.0/24"
   destination_address_prefix  = "*"
   resource_group_name         = azurerm_resource_group.vmudacity.name
@@ -77,7 +77,6 @@ resource "azurerm_lb_backend_address_pool" "bpepool" {
   name                = var.BackEndAddressPool
 }
 
-
 resource "azurerm_lb_rule" "lbnatrule" {
   loadbalancer_id                = azurerm_lb.vmudacity.id
   name                           = "http"
@@ -88,9 +87,8 @@ resource "azurerm_lb_rule" "lbnatrule" {
   backend_address_pool_ids       = [azurerm_lb_backend_address_pool.bpepool.id]
 }
 
-
-resource "azurerm_network_interface" "vmudacity" { . 
-  count               = var.count
+resource "azurerm_network_interface" "vmudacity" {  
+  count               = var.number
   name                = var.vmudacity-nic[count.index]
   location            = var.location
   resource_group_name = azurerm_resource_group.vmudacity.name
@@ -104,10 +102,22 @@ resource "azurerm_network_interface" "vmudacity" { .
   tags = var.tags
 }
 
+resource "azurerm_network_interface_backend_address_pool_association" "vmudacity" {
+  count = var.number
+  network_interface_id      = azurerm_network_interface.vmudacity[count.index].id
+  ip_configuration_name   = "IPConfiguration"
+  backend_address_pool_id = azurerm_lb_backend_address_pool.bpepool.id
+}
+
+resource "azurerm_network_interface_security_group_association" "vmudacity" {
+  count = var.number
+  network_interface_id      = azurerm_network_interface.vmudacity[count.index].id
+  network_security_group_id = azurerm_network_security_group.vmudacity.id
+}
+
 data "azurerm_resource_group" "image" {
   name                = var.packer_resource_group_name
 }
-
 
 data "azurerm_image" "image" {
   name                = var.packer_image_name
@@ -115,7 +125,7 @@ data "azurerm_image" "image" {
 }
 
 resource "azurerm_managed_disk" "vmudacity" {
-  count = var.count
+  count = var.number
   name                = var.disks[count.index]
   location            = var.location
   resource_group_name = azurerm_resource_group.vmudacity.name
@@ -134,7 +144,7 @@ resource "azurerm_availability_set" "vmudacity" {
 }
 
 resource "azurerm_virtual_machine" "vmudacity" {
-  count               = var.count
+  count               = var.number
   name                = var.virtual_machine_names[count.index]
   location            = var.location
   resource_group_name = azurerm_resource_group.vmudacity.name
@@ -171,72 +181,3 @@ resource "azurerm_virtual_machine" "vmudacity" {
   tags = var.tags
 }
 
-resource "azurerm_public_ip" "jumpbox" {
-  name                         = var.jumpbox-public-ip
-  location                     = var.location
-  resource_group_name          = azurerm_resource_group.vmudacity.name
-  allocation_method            = "Static"
-  tags = var.tags
-}
-
-resource "azurerm_network_interface" "jumpbox" {
-  name                = var.jumpbox-nic
-  location            = var.location
-  resource_group_name = azurerm_resource_group.vmudacity.name
-
-  ip_configuration {
-    name                          = "IPConfiguration"
-    subnet_id                     = azurerm_subnet.vmudacity.id
-    private_ip_address_allocation = "Dynamic"
-    public_ip_address_id          = azurerm_public_ip.jumpbox.id
-  }
-
-  tags = var.tags
-}
-
-resource "azurerm_virtual_machine_data_disk_attachment" "vmudacity" {
-  count = var.count
-  managed_disk_id    = azurerm_managed_disk.vmudacity[count.index].id
-  virtual_machine_id = azurerm_virtual_machine.vmudacity[count.index].id
-  lun                = "2"
-  caching            = "ReadWrite"
-}
-
-resource "azurerm_virtual_machine" "jumpbox" {
-  name                  = "jumpboxVM"
-  location              = var.location
-  resource_group_name   = azurerm_resource_group.vmudacity.name
-  network_interface_ids = [azurerm_network_interface.jumpbox.id]
-  vm_size               = "Standard_DS1_v2"
-
-  storage_image_reference {
-    publisher = "Canonical"
-    offer     = "UbuntuServer"
-    sku       = "18.04-LTS"
-    version   = "latest"
-  }
-
-  storage_os_disk {
-    name              = "jumpbox-osdisk"
-    caching           = "ReadWrite"
-    create_option     = "FromImage"
-    managed_disk_type = "Standard_LRS"
-  }
-
-  os_profile {
-    computer_name  = "jumpbox"
-    admin_username = var.admin_user
-    admin_password = var.admin_password
-  }
-
-  os_profile_linux_config {
-    disable_password_authentication = true
-
-    ssh_keys {
-      path     = "/home/azureuser/.ssh/authorized_keys"
-      key_data = file("~/.ssh/id_rsa.pub")
-    }
-  }
-
-  tags = var.tags
-}
